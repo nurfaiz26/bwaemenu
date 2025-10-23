@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Subscription extends Model
 {
@@ -19,13 +20,23 @@ class Subscription extends Model
         'is_active',
     ];
 
-    public function user(): BelongsTo 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->user_id = Auth::user()->id;
+            $model->end_date = now()->addDays(30);
+        });
+    }
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    protected function subscriptionPayment(): HasOne 
+    public function subscriptionPayment(): HasOne
     {
-        return $this->hasOne(SubscriptionPayment ::class);
+        return $this->hasOne(SubscriptionPayment::class);
     }
 }

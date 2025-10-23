@@ -13,7 +13,7 @@ class SubscriptionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class SubscriptionPolicy
      */
     public function view(User $user, Subscription $subscription): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class SubscriptionPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class SubscriptionPolicy
      */
     public function update(User $user, Subscription $subscription): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -45,7 +45,7 @@ class SubscriptionPolicy
      */
     public function delete(User $user, Subscription $subscription): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class SubscriptionPolicy
      */
     public function restore(User $user, Subscription $subscription): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +61,6 @@ class SubscriptionPolicy
      */
     public function forceDelete(User $user, Subscription $subscription): bool
     {
-        return false;
+        return true;
     }
 }

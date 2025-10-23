@@ -3,8 +3,10 @@
 namespace App\Policies;
 
 use App\Models\Product;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Auth;
 
 class ProductPolicy
 {
@@ -13,7 +15,7 @@ class ProductPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +23,7 @@ class ProductPolicy
      */
     public function view(User $user, Product $product): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +31,19 @@ class ProductPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        if (Auth::user()->role === 'admin') {
+            return true;
+        }
+
+        $subscription = Subscription::where('user_id', Auth::user()->id)
+            ->where('end_date', '>', now())
+            ->where('is_active', true)
+            ->latest()
+            ->first();
+
+        $countProduct = Product::where('user_id', Auth::user()->id)->count();
+
+        return !($countProduct >= 5 && !$subscription);
     }
 
     /**
@@ -37,7 +51,7 @@ class ProductPolicy
      */
     public function update(User $user, Product $product): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +59,7 @@ class ProductPolicy
      */
     public function delete(User $user, Product $product): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +67,7 @@ class ProductPolicy
      */
     public function restore(User $user, Product $product): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +75,6 @@ class ProductPolicy
      */
     public function forceDelete(User $user, Product $product): bool
     {
-        return false;
+        return true;
     }
 }

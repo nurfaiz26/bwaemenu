@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(Transaction::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Product::class)->constrained()->cascadeOnDelete();
             $table->integer('quantity');
-            $table->text('note');
+            $table->text('note')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

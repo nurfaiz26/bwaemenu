@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ProductCategory extends Model
 {
@@ -16,10 +18,35 @@ class ProductCategory extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'slug'
+        'slug',
+        'icon'
     ];
 
-    public function user() : BelongsTo 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (Auth::user()->role == 'store') {
+                # code...
+                $model->user_id = Auth::user()->id;
+            }
+
+            $model->slug = Str::slug($model->name);
+        });
+
+        static::updating(function ($model) {
+            if (Auth::user()->role == 'store') {
+                # code...
+                $model->user_id = Auth::user()->id;
+            }
+
+            $model->slug = Str::slug($model->name);
+        });
+    }
+
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
